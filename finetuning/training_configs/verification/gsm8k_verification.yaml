@@ -12,14 +12,14 @@ trainer:
   logger+:
     - class_path: finetuning.lightning_modules.patches.patched_loggers.PatchedWandbLogger
       init_args:
-        entity: niansong1996
-        project: cot-codegen
+        entity: vedudx
+        project: lever
         save_dir: *exp_name
         name: *exp_name
         log_model: False
         save_code: True
         offline: False
-        # offline: True
+      
   callbacks+:
     - class_path: pytorch_lightning.callbacks.model_checkpoint.ModelCheckpoint
       init_args:
@@ -47,7 +47,7 @@ trainer:
 model:
   class_path: lightning_modules.models.seq2seq_verification_model.EndVerificationModel
   init_args:
-    transformer_model_name: &transformer niansong1996/lever-gsm8k-codex
+    transformer_model_name: &transformer stabilityai/stablecode-completion-alpha-3b-4k     #niansong1996/lever-gsm8k-codex
     executor_cls: execution.executors.MathExecutor
     max_gen_len: 16
     sampling_temp: 0.001

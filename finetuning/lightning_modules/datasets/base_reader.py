@@ -193,7 +193,8 @@ def customized_collate_fn_enc_dec(examples: List[Dict[str, Any]]) -> Dict[str, A
 def customized_collate_fn(examples: List[Dict[str, Any]], is_left_pad: bool = True) -> Dict[str, Any]:
     result_dict = {}
 
-    pad_token_id = examples[0]["metadata"]["pad_token_id"]
+    pad_token_id = examples[0]["metadata"]["pad_token_id"] 
+    pad_token_id = 0 if pad_token_id is None else pad_token_id
 
     pad_func = left_pad_sequences if is_left_pad else right_pad_sequences
 

@@ -21,13 +21,13 @@ from transformers.generation_utils import GenerationMixin
 from finetuning.lightning_modules.models.codex_model import CodexModel
 
 def is_model_gpt_style(name: str) -> bool:
-    if "t5" in name or "bert" in name or "tapex" in name or "codex" in name or "lever" in name:
+    if "t5" in name or "bert" in name or "tapex" in name or "codex" in name or "lever" in name or "stabilityai" in name:
         return False
     else:
         return True
 
 def is_encoder_only_model(name: str) -> bool:
-    if "bert" in name.lower() or "lever-gsm8k" in name.lower():
+    if "bert" in name.lower() or "lever-gsm8k" in name.lower():  #stable code is padded right
         # this covers bert, roberta, deberta
         return True
     elif "bart" in name.lower():
@@ -252,6 +252,23 @@ def get_model(model_name: str,
         if not tokenizer_only: 
             engine = engine_name_mapping[model_name]
             model = CodexModel(engine=engine, tokenizer=tokenizer, **additional_init_args)
+    elif model_name == "stabilityai/stablecode-completion-alpha-3b-4k":
+        tokenizer = AutoTokenizer.from_pretrained("stabilityai/stablecode-completion-alpha-3b-4k")
+
+        tokenizer.pad_token = tokenizer.eos_token
+             # to accomandate the length of codex and the prompt
+        tokenizer.model_max_length = 2048
+
+        
+        tokenizer.padding_side = "right"
+       
+
+        if not tokenizer_only:
+            model = AutoModelForCausalLM.from_pretrained(
+            "stabilityai/stablecode-completion-alpha-3b-4k",
+            trust_remote_code=True,
+            torch_dtype="auto"
+                        )
     else:
         print(f"unknown model: {model_name}")
         raise NotImplementedError
